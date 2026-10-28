@@ -29,3 +29,4 @@ describe('UncertaintyBadge', () => {
     expect(screen.getByText('Resolved')).toBeInTheDocument();
   });
 });
+

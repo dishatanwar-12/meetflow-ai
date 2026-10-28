@@ -1,7 +1,7 @@
 import os
-from typing import List, Optional
+import json
+from typing import List, Optional, Union
 from pydantic_settings import BaseSettings
-from pydantic import Field
 
 class Settings(BaseSettings):
     APP_NAME: str = "MeetFlow AI"
@@ -26,17 +26,27 @@ class Settings(BaseSettings):
 
     # Upload & File constraints
     UPLOAD_MAX_SIZE_MB: int = 15
-    ALLOWED_EXTENSIONS: List[str] = ["txt", "pdf", "docx"]
+    ALLOWED_EXTENSIONS: Union[List[str], str] = ["txt", "pdf", "docx"]
 
     # URLs & CORS
     FRONTEND_URL: str = "http://localhost:5173"
     BACKEND_PUBLIC_URL: str = "http://localhost:8000"
-    CORS_ORIGINS: List[str] = [
+    CORS_ORIGINS: Union[List[str], str] = [
         "http://localhost:5173",
         "http://localhost:3000",
         "http://127.0.0.1:5173",
         "http://localhost:8000",
     ]
+
+    def get_allowed_extensions(self) -> List[str]:
+        if isinstance(self.ALLOWED_EXTENSIONS, str):
+            return [e.strip() for e in self.ALLOWED_EXTENSIONS.split(",") if e.strip()]
+        return self.ALLOWED_EXTENSIONS
+
+    def get_cors_origins(self) -> List[str]:
+        if isinstance(self.CORS_ORIGINS, str):
+            return [o.strip() for o in self.CORS_ORIGINS.split(",") if o.strip()]
+        return self.CORS_ORIGINS
 
     class Config:
         env_file = ".env"
@@ -45,4 +55,3 @@ class Settings(BaseSettings):
         extra = "ignore"
 
 settings = Settings()
-

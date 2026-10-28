@@ -243,3 +243,4 @@ Peter: We might move the production launch to December if the security audit tak
 
 if __name__ == "__main__":
     asyncio.run(seed())
+

@@ -10,3 +10,4 @@ describe('App Route Navigation', () => {
     expect(await screen.findByText(/Sign in to MeetFlow AI/i)).toBeInTheDocument();
   });
 });
+

@@ -50,3 +50,4 @@ export const Topbar: React.FC<TopbarProps> = ({ onMenuClick }) => {
     </header>
   );
 };
+

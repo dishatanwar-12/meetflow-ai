@@ -226,3 +226,4 @@ export const RisksQuestionsPage: React.FC = () => {
     </div>
   );
 };
+
