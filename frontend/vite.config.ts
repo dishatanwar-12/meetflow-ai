@@ -11,7 +11,8 @@ export default defineConfig({
     },
   },
   server: {
-    port: 5173,
+    port: 3000,
+    strictPort: true,
     host: true,
     proxy: {
       '/api': {
@@ -26,4 +27,3 @@ export default defineConfig({
     setupFiles: './tests/setup.ts',
   },
 });
-
