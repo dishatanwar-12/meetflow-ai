@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: meetflow-db
+    restart: always
+    environment:
+      POSTGRES_USER: meetflow
+      POSTGRES_PASSWORD: meetflow_secret_password
+      POSTGRES_DB: meetflow
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U meetflow"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: meetflow-backend
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+asyncpg://meetflow:meetflow_secret_password@db:5432/meetflow
+      APP_ENV: development
+      DEBUG: "true"
+      JWT_SECRET_KEY: docker-compose-dev-secret-key-min-32-chars-long
+      NVIDIA_API_KEY: ${NVIDIA_API_KEY:-}
+      NVIDIA_BASE_URL: https://integrate.api.nvidia.com/v1
+      NVIDIA_MODEL: meta/llama-3.3-70b-instruct
+      FRONTEND_URL: http://localhost:5173
+      BACKEND_PUBLIC_URL: http://localhost:8000
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: meetflow-frontend
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "5173:80"
+
+volumes:
+  postgres_data:
+
