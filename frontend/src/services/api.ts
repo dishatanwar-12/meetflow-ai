@@ -14,6 +14,7 @@ import {
   TimelineItem,
   ContradictionConflict
 } from '../types';
+import { mockDataStore } from './mockDataStore';
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api/v1';
 
@@ -30,12 +31,112 @@ class ApiClient {
     return headers;
   }
 
+  private handleFallback<T>(endpoint: string, options: RequestInit = {}): T {
+    const method = (options.method || 'GET').toUpperCase();
+    const cleanEndpoint = endpoint.split('?')[0];
+
+    // Auth
+    if (cleanEndpoint === '/auth/login' && method === 'POST') {
+      const { email, password } = options.body ? JSON.parse(options.body as string) : {};
+      return mockDataStore.handleLogin(email, password) as unknown as T;
+    }
+    if (cleanEndpoint === '/auth/register' && method === 'POST') {
+      const data = options.body ? JSON.parse(options.body as string) : {};
+      return mockDataStore.handleRegister(data) as unknown as T;
+    }
+    if (cleanEndpoint === '/auth/me') {
+      return mockDataStore.handleGetCurrentUser() as unknown as T;
+    }
+
+    // Dashboard
+    if (cleanEndpoint === '/dashboard/stats') {
+      return mockDataStore.handleDashboardStats() as unknown as T;
+    }
+
+    // Meetings
+    if (cleanEndpoint === '/meetings' && method === 'GET') {
+      return mockDataStore.handleGetMeetings() as unknown as T;
+    }
+    if (cleanEndpoint === '/meetings' && method === 'POST') {
+      const data = options.body ? JSON.parse(options.body as string) : {};
+      return mockDataStore.handleCreateMeeting(data) as unknown as T;
+    }
+    if (cleanEndpoint.startsWith('/meetings/') && cleanEndpoint.endsWith('/review')) {
+      const id = cleanEndpoint.split('/')[2];
+      return mockDataStore.handleGetMeetingReview(id) as unknown as T;
+    }
+    if (cleanEndpoint.startsWith('/meetings/') && cleanEndpoint.endsWith('/analyze') && method === 'POST') {
+      return { success: true, message: 'Meeting analyzed successfully', meeting_id: cleanEndpoint.split('/')[2], status: 'reviewed' } as unknown as T;
+    }
+    if (cleanEndpoint.startsWith('/meetings/') && method === 'GET') {
+      const id = cleanEndpoint.split('/')[2];
+      return mockDataStore.handleGetMeeting(id) as unknown as T;
+    }
+
+    // Tasks
+    if (cleanEndpoint === '/tasks' && method === 'GET') {
+      return mockDataStore.handleGetTasks() as unknown as T;
+    }
+    if (cleanEndpoint === '/tasks' && method === 'POST') {
+      const data = options.body ? JSON.parse(options.body as string) : {};
+      return mockDataStore.handleCreateTask(data) as unknown as T;
+    }
+    if (cleanEndpoint.startsWith('/tasks/') && (method === 'PUT' || method === 'PATCH')) {
+      const id = cleanEndpoint.split('/')[2];
+      const data = options.body ? JSON.parse(options.body as string) : {};
+      return mockDataStore.handleUpdateTask(id, data) as unknown as T;
+    }
+
+    // Decisions
+    if (cleanEndpoint === '/decisions' && method === 'GET') {
+      return mockDataStore.handleGetDecisions() as unknown as T;
+    }
+    if (cleanEndpoint.startsWith('/decisions/') && cleanEndpoint.endsWith('/confirm')) {
+      const id = cleanEndpoint.split('/')[2];
+      return mockDataStore.handleConfirmDecision(id) as unknown as T;
+    }
+    if (cleanEndpoint.startsWith('/decisions/') && cleanEndpoint.endsWith('/reject')) {
+      const id = cleanEndpoint.split('/')[2];
+      return mockDataStore.handleRejectDecision(id) as unknown as T;
+    }
+
+    // Risks & Questions
+    if (cleanEndpoint === '/risks') {
+      return mockDataStore.handleGetRisks() as unknown as T;
+    }
+    if (cleanEndpoint === '/questions') {
+      return mockDataStore.handleGetQuestions() as unknown as T;
+    }
+
+    // Clients & Projects
+    if (cleanEndpoint.startsWith('/clients')) {
+      return mockDataStore.handleGetClients() as unknown as T;
+    }
+    if (cleanEndpoint.startsWith('/projects')) {
+      return mockDataStore.handleGetProjects() as unknown as T;
+    }
+
+    return {} as T;
+  }
+
   private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const isFormData = options.body instanceof FormData;
     const headers = { ...this.getHeaders(isFormData), ...options.headers };
 
     const url = `${BASE_URL}${endpoint}`;
-    const response = await fetch(url, { ...options, headers });
+    let response: Response;
+
+    try {
+      response = await fetch(url, { ...options, headers });
+    } catch {
+      // Network unreachable or CORS blocked
+      return this.handleFallback<T>(endpoint, options);
+    }
+
+    // If server responds with 405 (static host with no API) or 404 (endpoint not mapped on static host)
+    if (response.status === 405 || (response.status === 404 && !BASE_URL.startsWith('http'))) {
+      return this.handleFallback<T>(endpoint, options);
+    }
 
     if (response.status === 401) {
       localStorage.removeItem('meetflow_token');
