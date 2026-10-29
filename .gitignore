@@ -44,6 +44,7 @@ yarn-error.log*
 frontend/dist/
 frontend/dist-ssr/
 *.local
+.vercel
 
 # Environment variables & secrets (NEVER COMMIT REAL SECRETS)
 .env
