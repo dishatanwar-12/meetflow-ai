@@ -2,7 +2,7 @@
 
 > Enterprise-grade web application converting client meeting transcripts and notes into structured, traceable, editable meeting outcomes: Decisions, Tasks, Owners, Due Dates, Risks, Dependencies, and Unanswered Questions — powered by hosted **NVIDIA NIM** LLMs.
 
-[![CI](https://github.com/your-username/meetflow-ai/actions/workflows/ci.yml/badge.svg)](https://github.com/your-username/meetflow-ai/actions)
+[![CI](https://github.com/dishatanwar-12/meetflow-ai/actions/workflows/ci.yml/badge.svg)](https://github.com/dishatanwar-12/meetflow-ai/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![React 18](https://img.shields.io/badge/react-18-cyan.svg)](https://react.dev/)
