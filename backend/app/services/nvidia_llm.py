@@ -15,9 +15,14 @@ class NvidiaLLMError(Exception):
         self.status_code = status_code
         self.details = details
 
+_DEFAULT_UNSET = object()
+
 class NvidiaLLMService:
-    def __init__(self, api_key: Optional[str] = None, base_url: Optional[str] = None, model: Optional[str] = None):
-        self.api_key = api_key or settings.NVIDIA_API_KEY
+    def __init__(self, api_key: Any = _DEFAULT_UNSET, base_url: Optional[str] = None, model: Optional[str] = None):
+        if api_key is _DEFAULT_UNSET:
+            self.api_key = settings.NVIDIA_API_KEY
+        else:
+            self.api_key = api_key
         self.base_url = (base_url or settings.NVIDIA_BASE_URL).rstrip("/")
         self.model = model or settings.NVIDIA_MODEL
         self.timeout = settings.NVIDIA_TIMEOUT_SECONDS
@@ -25,7 +30,12 @@ class NvidiaLLMService:
 
     def is_configured(self) -> bool:
         """Checks if a valid-looking NVIDIA API key is configured."""
-        return bool(self.api_key and len(self.api_key.strip()) > 5)
+        if not self.api_key:
+            return False
+        key = str(self.api_key).strip()
+        if len(key) <= 5 or key.startswith("your_real_nvidia_nim"):
+            return False
+        return True
 
     async def generate_chat_completion(
         self,

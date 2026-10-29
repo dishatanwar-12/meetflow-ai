@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { Input } from '../components/ui/Input';
 import { Button } from '../components/ui/Button';
 import { Alert } from '../components/ui/Alert';
-import { Sparkles, Shield, ArrowRight } from 'lucide-react';
+import { Check, Shield, ArrowRight } from 'lucide-react';
 
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -32,17 +32,17 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#F8F9FD] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
-        <div className="w-12 h-12 rounded-2xl bg-brand-950 mx-auto flex items-center justify-center text-white shadow-lg mb-3">
-          <Sparkles className="w-6 h-6 text-accent-100" />
+        <div className="w-12 h-12 rounded-2xl bg-[#6C52EE] mx-auto flex items-center justify-center text-white shadow-lg shadow-[#6C52EE]/25 mb-3">
+          <Check className="w-6 h-6 stroke-[3]" />
         </div>
-        <h2 className="text-2xl font-bold tracking-tight text-slate-900">Sign in to MeetFlow AI</h2>
-        <p className="mt-1 text-xs text-slate-500">Client Meeting-to-Action Tracker</p>
+        <h2 className="text-2xl font-bold tracking-tight text-slate-900">Sign in to MeetingFlow</h2>
+        <p className="mt-1 text-xs text-slate-400">From Conversations to Action</p>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-6 sm:px-10 shadow-sm rounded-2xl border border-slate-200 space-y-6">
+        <div className="bg-white py-8 px-6 sm:px-10 shadow-[0_4px_24px_-4px_rgba(108,82,238,0.06)] rounded-3xl border border-slate-100 space-y-6">
           {error && <Alert type="error">{error}</Alert>}
 
           <form onSubmit={handleSubmit} className="space-y-4">

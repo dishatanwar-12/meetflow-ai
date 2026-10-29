@@ -69,12 +69,14 @@ async def list_meetings(
 
         t_count = (await db.execute(select(func.count(Task.id)).where(Task.meeting_id == m.id))).scalar() or 0
         d_count = (await db.execute(select(func.count(Decision.id)).where(Decision.meeting_id == m.id))).scalar() or 0
+        a_count = (await db.execute(select(func.count(MeetingAttendee.id)).where(MeetingAttendee.meeting_id == m.id))).scalar() or 0
 
         resp = MeetingResponse.model_validate(m)
         resp.client_name = client_name
         resp.project_name = project_name
         resp.tasks_count = t_count
         resp.decisions_count = d_count
+        resp.attendees_count = a_count
         items.append(resp)
 
     return items

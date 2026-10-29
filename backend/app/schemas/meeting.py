@@ -71,6 +71,7 @@ class MeetingResponse(MeetingBase):
     project_name: Optional[str] = None
     tasks_count: Optional[int] = 0
     decisions_count: Optional[int] = 0
+    attendees_count: Optional[int] = 0
     created_at: datetime
     updated_at: datetime
 

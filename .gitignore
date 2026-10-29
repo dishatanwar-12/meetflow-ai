@@ -11,6 +11,8 @@ __pycache__/
 env/
 venv/
 .venv/
+.venv_win/
+*.log
 ENV/
 build/
 develop-eggs/

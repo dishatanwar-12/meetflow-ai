@@ -17,9 +17,30 @@ export const ExportModal: React.FC<ExportModalProps> = ({
   onClose,
   onOpenGitHubExport,
 }) => {
-  const downloadFile = (type: 'csv' | 'json' | 'markdown' | 'pdf') => {
-    const url = api.getDownloadUrl(type, meetingId);
-    window.open(url, '_blank');
+  const downloadFile = async (type: 'csv' | 'json' | 'markdown' | 'pdf') => {
+    try {
+      const token = localStorage.getItem('meetflow_token') || '';
+      const url = api.getDownloadUrl(type, meetingId);
+      const res = await fetch(url, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+      if (!res.ok) {
+        throw new Error(`Export failed with status ${res.status}`);
+      }
+      const blob = await res.blob();
+      const objectUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = objectUrl;
+      const extensions: Record<string, string> = { csv: 'csv', json: 'json', markdown: 'md', pdf: 'pdf' };
+      a.download = `meeting-export-${meetingId.slice(0, 8)}.${extensions[type] || type}`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(objectUrl);
+    } catch {
+      const url = api.getDownloadUrl(type, meetingId);
+      window.open(url, '_blank');
+    }
   };
 
   return (

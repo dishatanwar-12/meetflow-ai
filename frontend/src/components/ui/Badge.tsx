@@ -4,7 +4,7 @@ import { twMerge } from 'tailwind-merge';
 
 interface BadgeProps {
   children: React.ReactNode;
-  variant?: 'default' | 'neutral' | 'success' | 'warning' | 'danger' | 'info' | 'teal' | 'amber';
+  variant?: 'default' | 'neutral' | 'success' | 'warning' | 'danger' | 'info' | 'teal' | 'amber' | 'purple';
   size?: 'sm' | 'md';
   className?: string;
   title?: string;
@@ -17,22 +17,23 @@ export const Badge: React.FC<BadgeProps> = ({
   className,
   title,
 }) => {
-  const baseStyles = 'inline-flex items-center font-medium rounded-md border';
+  const baseStyles = 'inline-flex items-center font-medium rounded-full border transition-colors';
 
   const variants = {
-    default: 'bg-brand-50 text-brand-900 border-brand-200',
-    neutral: 'bg-slate-50 text-slate-700 border-slate-200',
-    success: 'bg-emerald-50 text-emerald-800 border-emerald-200',
-    warning: 'bg-amber-50 text-amber-900 border-amber-300',
-    amber: 'bg-amber-50 text-amber-900 border-amber-300',
-    danger: 'bg-rose-50 text-rose-800 border-rose-200',
-    info: 'bg-sky-50 text-sky-800 border-sky-200',
-    teal: 'bg-teal-50 text-teal-800 border-teal-200',
+    default: 'bg-[#F0EBFE] text-[#6C52EE] border-purple-100',
+    purple: 'bg-[#F0EBFE] text-[#6C52EE] border-purple-100',
+    neutral: 'bg-slate-100 text-slate-700 border-slate-200/80',
+    success: 'bg-[#ECFDF5] text-[#059669] border-emerald-100/60',
+    warning: 'bg-[#FFFBEB] text-[#D97706] border-amber-200/60',
+    amber: 'bg-[#FFFBEB] text-[#D97706] border-amber-200/60',
+    danger: 'bg-[#FFF1F2] text-[#E11D48] border-rose-200/60',
+    info: 'bg-[#EFF6FF] text-[#2563EB] border-blue-200/60',
+    teal: 'bg-[#ECFDF5] text-[#059669] border-teal-200/60',
   };
 
   const sizes = {
-    sm: 'text-xs px-2 py-0.5 leading-4',
-    md: 'text-xs px-2.5 py-1 leading-4',
+    sm: 'text-[11px] px-2 py-0.5 leading-4 font-semibold',
+    md: 'text-xs px-2.5 py-1 leading-4 font-semibold',
   };
 
   return (
@@ -44,4 +45,3 @@ export const Badge: React.FC<BadgeProps> = ({
     </span>
   );
 };
-

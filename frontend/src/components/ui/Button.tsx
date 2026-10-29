@@ -3,7 +3,7 @@ import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'outline' | 'danger' | 'ghost' | 'teal';
+  variant?: 'primary' | 'secondary' | 'outline' | 'danger' | 'ghost' | 'teal' | 'light-purple';
   size?: 'sm' | 'md' | 'lg';
   isLoading?: boolean;
 }
@@ -17,21 +17,22 @@ export const Button: React.FC<ButtonProps> = ({
   disabled,
   ...props
 }) => {
-  const baseStyles = 'inline-flex items-center justify-center font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
+  const baseStyles = 'inline-flex items-center justify-center font-medium rounded-xl transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
 
   const variants = {
-    primary: 'bg-brand-900 text-white hover:bg-brand-800 focus:ring-brand-900',
-    secondary: 'bg-slate-100 text-slate-800 hover:bg-slate-200 focus:ring-slate-400 border border-slate-200',
-    outline: 'bg-transparent text-slate-700 hover:bg-slate-50 border border-slate-300 focus:ring-slate-400',
+    primary: 'bg-[#6C52EE] text-white hover:bg-[#5840D8] active:bg-[#4C35B8] shadow-sm hover:shadow focus:ring-[#6C52EE]/30',
+    secondary: 'bg-slate-100 text-slate-800 hover:bg-slate-200 focus:ring-slate-300 border border-slate-200/80',
+    outline: 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 focus:ring-slate-300',
     danger: 'bg-rose-600 text-white hover:bg-rose-700 focus:ring-rose-500',
     ghost: 'bg-transparent text-slate-600 hover:bg-slate-100 focus:ring-slate-300',
-    teal: 'bg-accent-500 text-white hover:bg-accent-600 focus:ring-accent-500',
+    teal: 'bg-emerald-600 text-white hover:bg-emerald-700 focus:ring-emerald-500',
+    'light-purple': 'bg-[#F0EBFE] text-[#6C52EE] hover:bg-[#E4DBFD] focus:ring-[#6C52EE]/30 font-semibold',
   };
 
   const sizes = {
-    sm: 'text-xs px-2.5 py-1.5 gap-1.5',
-    md: 'text-sm px-3.5 py-2 gap-2',
-    lg: 'text-base px-5 py-2.5 gap-2.5',
+    sm: 'text-xs px-3 py-1.5 gap-1.5 rounded-lg',
+    md: 'text-sm px-4 py-2 gap-2 rounded-xl',
+    lg: 'text-base px-5 py-2.5 gap-2.5 rounded-xl',
   };
 
   return (
@@ -50,4 +51,3 @@ export const Button: React.FC<ButtonProps> = ({
     </button>
   );
 };
-

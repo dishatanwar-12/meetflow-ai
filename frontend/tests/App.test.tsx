@@ -7,7 +7,7 @@ describe('App Route Navigation', () => {
   it('renders login screen when unauthenticated', async () => {
     localStorage.clear();
     render(<App />);
-    expect(await screen.findByText(/Sign in to MeetFlow AI/i)).toBeInTheDocument();
+    expect(await screen.findByText(/Sign in to Meet(ing)?Flow/i)).toBeInTheDocument();
   });
 });
 

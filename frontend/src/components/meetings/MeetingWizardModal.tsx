@@ -11,12 +11,16 @@ interface MeetingWizardModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: (meetingId: string) => void;
+  initialTranscript?: string;
+  initialFile?: File | null;
 }
 
 export const MeetingWizardModal: React.FC<MeetingWizardModalProps> = ({
   isOpen,
   onClose,
   onSuccess,
+  initialTranscript = '',
+  initialFile = null,
 }) => {
   const [clients, setClients] = useState<Client[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
@@ -30,11 +34,16 @@ export const MeetingWizardModal: React.FC<MeetingWizardModalProps> = ({
   const [meetingDate, setMeetingDate] = useState('');
   const [timezone, setTimezone] = useState(Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC');
   const [meetingType, setMeetingType] = useState('status_update');
-  const [rawTranscript, setRawTranscript] = useState('');
+  const [rawTranscript, setRawTranscript] = useState(initialTranscript);
   const [attendees, setAttendees] = useState<Array<{ name: string; email: string; role: string; speaker_label: string }>>([
     { name: '', email: '', role: '', speaker_label: '' }
   ]);
-  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [uploadedFile, setUploadedFile] = useState<File | null>(initialFile);
+
+  useEffect(() => {
+    if (initialTranscript) setRawTranscript(initialTranscript);
+    if (initialFile) setUploadedFile(initialFile);
+  }, [initialTranscript, initialFile]);
 
   useEffect(() => {
     if (isOpen) {

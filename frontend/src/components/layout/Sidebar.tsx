@@ -1,63 +1,112 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import {
-  LayoutDashboard,
-  Users2,
-  FolderKanban,
-  Video,
+  Home,
+  PlusSquare,
+  CalendarDays,
   CheckSquare,
-  Scale,
-  AlertOctagon,
-  Boxes,
+  Download,
   Settings,
-  Sparkles
+  Folder,
+  Users2,
+  Lightbulb,
+  ArrowRight
 } from 'lucide-react';
 import { clsx } from 'clsx';
-import { useAuth } from '../../context/AuthContext';
+import { MeetingFlowLogo } from '../common/MeetingFlowLogo';
+import { GlowingWavesGraphic } from '../common/BotanicalLeaves';
 
 interface SidebarProps {
   onClose?: () => void;
+  onNewMeetingClick?: () => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
-  const { user } = useAuth();
-
-  const navigation = [
-    { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-    { name: 'Clients', href: '/clients', icon: Users2 },
-    { name: 'Projects', href: '/projects', icon: FolderKanban },
-    { name: 'Meetings', href: '/meetings', icon: Video },
-    { name: 'Tasks Board', href: '/tasks', icon: CheckSquare },
-    { name: 'Decisions', href: '/decisions', icon: Scale },
-    { name: 'Risks & Questions', href: '/risks-questions', icon: AlertOctagon },
-    { name: 'Integrations', href: '/integrations', icon: Boxes },
+export const Sidebar: React.FC<SidebarProps> = ({ onClose, onNewMeetingClick }) => {
+  const primaryNavigation = [
+    { name: 'Home', href: '/dashboard', icon: Home },
+    { name: 'New Meeting', href: '#new-meeting', icon: PlusSquare, isAction: true },
+    { name: 'Meetings', href: '/meetings', icon: CalendarDays },
+    { name: 'Action Tracker', href: '/tasks', icon: CheckSquare },
+    { name: 'Export', href: '/integrations', icon: Download },
     { name: 'Settings', href: '/settings', icon: Settings },
   ];
 
+  const secondaryNavigation = [
+    { name: 'Projects', href: '/projects', icon: Folder },
+    { name: 'Clients', href: '/clients', icon: Users2 },
+    { name: 'Decisions', href: '/decisions', icon: Lightbulb },
+  ];
+
   return (
-    <aside className="w-64 bg-brand-950 text-slate-300 flex flex-col h-full border-r border-slate-800">
+    <aside className="w-64 bg-[#0A0C18] text-slate-400 flex flex-col h-full border-r border-slate-900 select-none">
       {/* Brand Header */}
-      <div className="h-16 flex items-center px-6 gap-3 border-b border-brand-900 bg-brand-950/90">
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-700 to-accent-500 flex items-center justify-center text-white shadow-md">
-          <Sparkles className="w-5 h-5 text-white" />
-        </div>
-        <div>
-          <span className="font-bold text-base tracking-tight text-white block">MeetFlow AI</span>
-          <span className="text-[10px] text-accent-100/70 tracking-widest uppercase font-semibold">Action Tracker</span>
+      <div className="h-20 flex items-center px-5 gap-3">
+        <MeetingFlowLogo className="w-8 h-8 flex-shrink-0" />
+        <div className="min-w-0">
+          <span className="font-bold text-base tracking-tight text-white block leading-tight">MeetingFlow</span>
+          <span className="text-[11px] text-slate-500 font-normal truncate block mt-0.5">From Conversations to Action</span>
         </div>
       </div>
 
-      {/* Workspace Indicator */}
-      <div className="px-5 py-3.5 border-b border-slate-800/80 bg-brand-900/30">
-        <div className="text-[11px] font-semibold tracking-wider text-slate-400 uppercase">Workspace</div>
-        <div className="text-xs font-medium text-white truncate mt-0.5">
-          {user?.organization_id ? 'Enterprise Workspace' : 'My Team'}
-        </div>
-      </div>
+      {/* Main Nav items */}
+      <nav className="flex-1 px-3.5 py-2 space-y-1 overflow-y-auto">
+        {primaryNavigation.map((item) => {
+          const Icon = item.icon;
+          if (item.isAction) {
+            return (
+              <button
+                key={item.name}
+                type="button"
+                onClick={() => {
+                  if (onClose) onClose();
+                  if (onNewMeetingClick) onNewMeetingClick();
+                  else {
+                    window.dispatchEvent(new CustomEvent('open-new-meeting-wizard'));
+                  }
+                }}
+                className="w-full flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-white hover:bg-white/5 transition-all text-left group"
+              >
+                <Icon className="w-4 h-4 text-slate-400 group-hover:text-white transition-colors" />
+                <span>{item.name}</span>
+              </button>
+            );
+          }
 
-      {/* Nav items */}
-      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-        {navigation.map((item) => {
+          return (
+            <NavLink
+              key={item.name}
+              to={item.href}
+              onClick={onClose}
+              className={({ isActive }) =>
+                clsx(
+                  'flex items-center gap-3.5 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all group',
+                  isActive
+                    ? 'bg-gradient-to-r from-[#6366F1] to-[#4F46E5] text-white shadow-[0_4px_16px_rgba(99,102,241,0.3)]'
+                    : 'text-slate-400 hover:text-white hover:bg-white/5'
+                )
+              }
+            >
+              {({ isActive }) => (
+                <>
+                  <Icon
+                    className={clsx(
+                      'w-4 h-4 transition-colors',
+                      isActive ? 'text-white' : 'text-slate-400 group-hover:text-white'
+                    )}
+                  />
+                  <span>{item.name}</span>
+                </>
+              )}
+            </NavLink>
+          );
+        })}
+
+        {/* Divider */}
+        <div className="pt-3 pb-2 px-3">
+          <div className="h-px bg-slate-800/80" />
+        </div>
+
+        {secondaryNavigation.map((item) => {
           const Icon = item.icon;
           return (
             <NavLink
@@ -66,33 +115,60 @@ export const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
               onClick={onClose}
               className={({ isActive }) =>
                 clsx(
-                  'flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-xs font-medium transition-colors',
+                  'flex items-center gap-3.5 px-3.5 py-2 rounded-xl text-xs font-medium transition-all group',
                   isActive
-                    ? 'bg-brand-800 text-white shadow-sm font-semibold'
-                    : 'text-slate-400 hover:text-white hover:bg-brand-900/60'
+                    ? 'bg-gradient-to-r from-[#6366F1] to-[#4F46E5] text-white shadow-[0_4px_16px_rgba(99,102,241,0.3)]'
+                    : 'text-slate-400 hover:text-white hover:bg-white/5'
                 )
               }
             >
-              <Icon className="w-4 h-4 flex-shrink-0" />
-              {item.name}
+              {({ isActive }) => (
+                <>
+                  <Icon
+                    className={clsx(
+                      'w-4 h-4 transition-colors',
+                      isActive ? 'text-white' : 'text-slate-500 group-hover:text-white'
+                    )}
+                  />
+                  <span>{item.name}</span>
+                </>
+              )}
             </NavLink>
           );
         })}
       </nav>
 
-      {/* Footer User Info */}
-      <div className="p-4 border-t border-slate-800/80 bg-brand-950/60">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-brand-800 border border-brand-700 flex items-center justify-center text-xs font-bold text-accent-100">
-            {user?.full_name?.charAt(0) || 'U'}
+      {/* Bottom Promotion Card */}
+      <div className="p-3.5">
+        <div className="bg-[#131528] border border-slate-800/80 rounded-2xl p-4 relative overflow-hidden shadow-lg group cursor-pointer">
+          {/* Glowing Wavy Graphic in the Background */}
+          <GlowingWavesGraphic className="absolute -bottom-2 -left-4 -right-4 h-24 w-[120%] pointer-events-none opacity-70" />
+
+          <div className="relative z-10 pr-6">
+            <div className="font-bold text-white text-xs sm:text-[13px] leading-snug">
+              Better meetings. <br />
+              More action.
+            </div>
+            <div className="text-[11px] text-slate-400 mt-1 leading-relaxed font-normal">
+              Turn your conversations <br className="hidden sm:inline" /> into clear next steps.
+            </div>
           </div>
-          <div className="flex-1 min-w-0">
-            <div className="text-xs font-semibold text-white truncate">{user?.full_name || 'User'}</div>
-            <div className="text-[10px] text-slate-400 truncate capitalize">{user?.role?.replace('_', ' ') || 'Member'}</div>
-          </div>
+
+          <button
+            type="button"
+            onClick={() => {
+              if (onNewMeetingClick) onNewMeetingClick();
+              else {
+                window.dispatchEvent(new CustomEvent('open-new-meeting-wizard'));
+              }
+            }}
+            className="w-7 h-7 rounded-lg bg-slate-800/90 group-hover:bg-[#6366F1] text-white flex items-center justify-center transition-all absolute bottom-3.5 right-3.5 z-10 shadow-sm"
+            aria-label="Create meeting action"
+          >
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
         </div>
       </div>
     </aside>
   );
 };
-

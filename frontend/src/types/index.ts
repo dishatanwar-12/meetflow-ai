@@ -95,6 +95,7 @@ export interface Meeting {
   raw_transcript?: string;
   tasks_count?: number;
   decisions_count?: number;
+  attendees_count?: number;
   created_at: string;
   updated_at: string;
 }
